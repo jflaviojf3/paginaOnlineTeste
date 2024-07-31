@@ -8,6 +8,98 @@
     body {
         font-family: Arial, sans-serif;
         margin: 0;
+        padding: 100;
+        background-color: #f2f2f2;
+    }
+    .container {
+        max-width: 1000px;
+        margin: 20px auto;
+        padding: 70px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    h3 {
+        text-align: center;
+    }
+    .resultado {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        margin-bottom: 1px;
+    }
+    .resultado div {
+        flex: 0 0 48% /* 48% width with a little space between them */
+    }
+    .resultado h2 {
+        margin-bottom: 1px;
+    }
+    .resultado ul {
+        list-style-type: none;
+        padding: 0; 
+    }
+    .resultado li {
+        margin-bottom: 5px;
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <div id="resultado"></div>
+</div>
+
+<script>
+    // Carregar dados da API externa
+    fetch('http://jamb-devs.tech:55075/resultado-dia')
+    .then(response => response.json())
+    .then(data => {
+        const resultadoDiv = document.getElementById('resultado');
+        const resultadoDoDia = data.ResultadoDoDia;
+        const tituloResultado = resultadoDoDia.tituloResultado;
+
+        if (tituloResultado) {
+            const titulo = document.createElement('h3');
+            titulo.textContent = tituloResultado;
+            resultadoDiv.appendChild(titulo);
+        }
+
+        const tiposPermitidos = ['PTM', 'PT', 'PTN', 'FED', 'COR'];
+
+        for (const tipo of tiposPermitidos) {
+            if (resultadoDoDia.hasOwnProperty(tipo)) {
+                const resultados = resultadoDoDia[tipo];
+                const tipoResultado = document.createElement('div');
+                tipoResultado.classList.add('resultado');
+                const titulo = document.createElement('h2');
+                titulo.textContent = tipo;
+                tipoResultado.appendChild(titulo);
+                const ul = document.createElement('ul');
+                for (const chave in resultados) {
+                    if (resultados.hasOwnProperty(chave)) {
+                        const li = document.createElement('li');
+                        li.textContent = `${chave}: ${resultados[chave]}`;
+                        ul.appendChild(li);
+                    }
+                }
+                tipoResultado.appendChild(ul);
+                resultadoDiv.appendChild(tipoResultado);
+            }
+        }
+    })
+    .catch(error => console.error('Erro ao carregar dados da API:', error));
+</script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resultados do Dia</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
         padding: 0;
         background-color: #f2f2f2;
     }
